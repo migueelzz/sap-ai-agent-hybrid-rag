@@ -1,11 +1,15 @@
 ### Backend
 
 ```bash
+
 docker compose up -d
 
 # setup database
 docker cp scripts/schema.sql atem_postgres:/schema.sql
 docker exec atem_postgres psql -U atem -d atem_rag -f /schema.sql
+
+# install dependencies
+pdm install
 
 # reset database
 pdm run python scripts/reset_db.py

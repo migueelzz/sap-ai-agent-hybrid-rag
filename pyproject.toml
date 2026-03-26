@@ -1,0 +1,52 @@
+[project]
+name = "atem-rag"
+version = "0.1.0"
+description = "RAG pipeline para base de conhecimento SAP — Projeto ATEM"
+authors = [
+    {name = "Miguel Henrique Lemes da Silva", email = "miguel.lemes@primecontrol.com.br"},
+]
+requires-python = "==3.13.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic-settings>=2.3.0",
+    "python-multipart>=0.0.9",
+    "sqlalchemy[asyncio]>=2.0.0",
+    "asyncpg>=0.29.0",
+    "pgvector>=0.3.0",
+    "pymupdf>=1.24.11",
+    "pdfplumber>=0.11.0",
+    "nltk>=3.9.0",
+    "numpy>=2.1.0",
+    "openai>=1.40.0",
+    "httpx>=0.27.0",
+    "python-dotenv>=1.0.0",
+    "sentence-transformers>=5.3.0",
+    "langgraph>=0.2.0",
+    "langchain-openai>=0.1.0",
+    "langchain-community>=0.2.0",
+    "langgraph-checkpoint-postgres>=2.0.0",
+    "psycopg[binary]>=3.1.1",
+    "ddgs>=0.1.0",
+]
+
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.scripts]
+dev    = "uvicorn app.main:app --reload --port 8000"
+ingest = "python scripts/init_db.py"
+lint   = "ruff check app/"
+fmt    = "ruff format app/"
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "ruff>=0.5.0",
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "httpx>=0.27.0",         # TestClient async do FastAPI
+]

@@ -14,13 +14,14 @@ $$SELECT unaccent('unaccent'::regdictionary, $1)$$;
 -- FONTES (arquivos originais)
 -- ============================================================
 CREATE TABLE sources (
-    id          SERIAL PRIMARY KEY,
-    filename    TEXT NOT NULL UNIQUE,
-    modulo      TEXT NOT NULL,        -- 'FI' | 'CO' | 'MM' | 'SD'
-    release     TEXT,                 -- ex: 'S/4HANA 2023'
-    tipo        TEXT DEFAULT 'pdf',   -- 'pdf' | 'codigo' | 'artefato'
-    total_pages INTEGER,
-    created_at  TIMESTAMPTZ DEFAULT NOW()
+    id              SERIAL PRIMARY KEY,
+    filename        TEXT NOT NULL UNIQUE,
+    modulo          TEXT NOT NULL,           -- 'FI' | 'CO' | 'MM' | 'SD' | 'PP'
+    release         TEXT,                    -- ex: 'S/4HANA 2023'
+    tipo            TEXT DEFAULT 'pdf',      -- 'pdf' | 'codigo' | 'artefato'
+    total_pages     INTEGER,
+    file_size_bytes BIGINT DEFAULT 0,
+    created_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ============================================================
@@ -120,3 +121,33 @@ INSERT INTO sap_catalog(tipo, codigo, descricao, modulo) VALUES
     ('transacao', 'ME21N', 'Criar pedido de compra',     'MM'),
     ('tabela',    'EKKO',  'Cabeçalho do pedido',        'MM'),
     ('tabela',    'EKPO',  'Posições do pedido',         'MM');
+
+-- ============================================================
+-- ARQUIVOS DE SESSÃO (contexto TXT enviado pelo usuário)
+-- ============================================================
+CREATE TABLE session_files (
+    id          SERIAL PRIMARY KEY,
+    session_id  TEXT NOT NULL,
+    filename    TEXT NOT NULL,
+    content     TEXT NOT NULL,
+    size_bytes  INTEGER NOT NULL,
+    created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_session_files_session ON session_files(session_id);
+
+-- ============================================================
+-- SKILLS (comportamentos especializados do agente)
+-- ============================================================
+CREATE TABLE skills (
+    id          SERIAL PRIMARY KEY,
+    name        TEXT NOT NULL UNIQUE,   -- slug, ex: 'cds-clean-core-refactoring'
+    title       TEXT NOT NULL,          -- título legível
+    description TEXT NOT NULL,          -- resumo curto (carregado sempre no contexto)
+    content     TEXT NOT NULL,          -- prompt completo (lazy-loaded via use_skill)
+    is_active   BOOLEAN DEFAULT TRUE,
+    created_at  TIMESTAMPTZ DEFAULT NOW(),
+    updated_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_skills_active ON skills(is_active);

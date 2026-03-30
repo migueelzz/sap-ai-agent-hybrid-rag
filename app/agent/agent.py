@@ -12,6 +12,28 @@ from app.config import settings
 
 _agent = None
 
+_GOOGLE_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
+
+
+def _resolve_llm() -> ChatOpenAI:
+    provider = (settings.llm_provider or "").strip().lower()
+    if provider == "google":
+        base_url = _GOOGLE_BASE_URL
+        # Remove prefixo "gemini/" que é específico do formato LiteLLM
+        model = settings.llm_model.removeprefix("gemini/")
+    else:
+        base_url = settings.llm_base_url or None
+        model = settings.llm_model
+    return ChatOpenAI(
+        model=model,
+        api_key=settings.llm_api_key or "no-key",
+        base_url=base_url,
+        max_tokens=settings.llm_max_tokens,
+        temperature=settings.llm_temperature,
+        streaming=True,
+    )
+
+
 # Colapsa runs de 15+ espaços para um único espaço (padding de colunas em tabelas Markdown).
 # Reduz tokens desperdiçados em mensagens de ferramentas que o agente recebe de volta.
 _EXCESS_SPACES = re.compile(r' {15,}')
@@ -64,14 +86,7 @@ async def get_agent():
     """
     global _agent
     if _agent is None:
-        llm = ChatOpenAI(
-            model=settings.llm_model,
-            api_key=settings.llm_api_key or "no-key",
-            base_url=settings.llm_base_url or None,
-            max_tokens=settings.llm_max_tokens,
-            temperature=settings.llm_temperature,
-            streaming=True,
-        )
+        llm = _resolve_llm()
         checkpointer = get_checkpointer()
         tools = [rag_search, web_search, scrape_url, use_skill, zip_file_explorer]
         if settings.mcp_enabled:

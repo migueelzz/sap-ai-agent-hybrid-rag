@@ -5,6 +5,15 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/)
 
 ---
 
+## [não lançado] — 2026-03-30 (suporte a Google Gemini direto via .env)
+
+### Adicionado
+- `app/config.py`: campo `LLM_PROVIDER` — aceita `"google"` para usar a API do Google diretamente (endpoint OpenAI-compatible), ou vazio para manter comportamento via `LLM_BASE_URL`
+- `app/agent/agent.py`: função `_resolve_llm()` que detecta o provider e configura `base_url` e model name automaticamente; `LLM_PROVIDER=google` injeta `https://generativelanguage.googleapis.com/v1beta/openai/` e remove o prefixo `gemini/` do model name (formato LiteLLM)
+- `.env.example`: campo `LLM_PROVIDER` com três exemplos comentados (Google, LiteLLM, OpenAI)
+
+---
+
 ## [não lançado] — 2026-03-30 (limpeza real ao deletar sessões)
 
 ### Alterado

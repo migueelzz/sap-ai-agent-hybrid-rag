@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     embedding_model: str = "paraphrase-MiniLM-L6-v2"
 
     # LLM
+    llm_provider: str = ""   # "google" | "" (usa llm_base_url diretamente)
     llm_model: str = "gemini/gemini-2.5-flash"
     llm_api_key: str = ""
     llm_base_url: str = ""

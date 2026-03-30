@@ -8,6 +8,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from '@/components/ui/chart'
+import { Skeleton } from '@/components/ui/skeleton'
 import { getMetricsBudget, getMetricsCalls, getMetricsErrors, getMetricsSummary } from '@/lib/api'
 import type { DailyCalls, ErrorLog, MetricsSummary, ProviderBudget } from '@/lib/types'
 
@@ -48,16 +49,21 @@ interface SummaryCardProps {
   label: string
   value: string
   sub?: string
+  loading?: boolean
 }
 
-function SummaryCard({ icon, label, value, sub }: SummaryCardProps) {
+function SummaryCard({ icon, label, value, sub, loading }: SummaryCardProps) {
   return (
     <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-2">
       <div className="flex items-center gap-2 text-muted-foreground text-sm">
         {icon}
         {label}
       </div>
-      <p className="text-2xl font-semibold text-foreground">{value}</p>
+      {loading ? (
+        <Skeleton className="h-8 w-24" />
+      ) : (
+        <p className="text-2xl font-semibold text-foreground">{value}</p>
+      )}
       {sub && <p className="text-xs text-muted-foreground">{sub}</p>}
     </div>
   )
@@ -168,25 +174,29 @@ export function AnalyticsPage() {
           <SummaryCard
             icon={<DollarSign className="size-4" />}
             label="Gasto total"
-            value={loading ? '—' : summary?.total_spend != null ? `$${summary.total_spend.toFixed(4)}` : 'N/D'}
+            loading={loading}
+            value={summary?.total_spend != null ? `$${summary.total_spend.toFixed(4)}` : 'N/D'}
             sub={periodLabel}
           />
           <SummaryCard
             icon={<Zap className="size-4" />}
             label="Total de tokens"
-            value={loading ? '—' : summary?.total_tokens != null ? formatTokens(summary.total_tokens) : 'N/D'}
+            loading={loading}
+            value={summary?.total_tokens != null ? formatTokens(summary.total_tokens) : 'N/D'}
             sub={periodLabel}
           />
           <SummaryCard
             icon={<TrendingUp className="size-4" />}
             label="Chamadas ao LLM"
-            value={loading ? '—' : String(summary?.total_calls ?? 0)}
+            loading={loading}
+            value={String(summary?.total_calls ?? 0)}
             sub={periodLabel}
           />
           <SummaryCard
             icon={<AlertTriangle className="size-4" />}
             label="Erros"
-            value={loading ? '—' : String(summary?.error_count ?? 0)}
+            loading={loading}
+            value={String(summary?.error_count ?? 0)}
             sub={periodLabel}
           />
         </div>
@@ -194,7 +204,24 @@ export function AnalyticsPage() {
         {/* Bar chart — chamadas por dia */}
         <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-3">
           <p className="text-sm font-medium">Chamadas por dia</p>
-          {chartData.length === 0 ? (
+          {loading ? (
+            <div className="h-52 flex flex-col justify-end gap-2 px-2">
+              <div className="flex items-end justify-around h-40 gap-2">
+                {Array.from({ length: 7 }).map((_, i) => (
+                  <Skeleton
+                    key={i}
+                    className="flex-1 rounded-t"
+                    style={{ height: `${30 + Math.sin(i) * 20 + (i % 3) * 15}%` }}
+                  />
+                ))}
+              </div>
+              <div className="flex justify-around gap-2">
+                {Array.from({ length: 7 }).map((_, i) => (
+                  <Skeleton key={i} className="h-3 flex-1" />
+                ))}
+              </div>
+            </div>
+          ) : chartData.length === 0 ? (
             <p className="text-sm text-muted-foreground py-8 text-center">Sem dados no período selecionado.</p>
           ) : (
             <ChartContainer config={callsChartConfig} className="h-52 w-full">
@@ -237,7 +264,18 @@ export function AnalyticsPage() {
           <div className="px-4 py-3 border-b border-border">
             <p className="text-sm font-medium">Log de erros recentes</p>
           </div>
-          {errors.length === 0 ? (
+          {loading ? (
+            <div className="flex flex-col divide-y divide-border">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-4 px-4 py-3">
+                  <Skeleton className="h-4 w-24 shrink-0" />
+                  <Skeleton className="h-4 w-16 shrink-0" />
+                  <Skeleton className="h-5 w-20 rounded-full shrink-0" />
+                  <Skeleton className="h-4 flex-1" />
+                </div>
+              ))}
+            </div>
+          ) : errors.length === 0 ? (
             <p className="text-sm text-muted-foreground p-6 text-center">Nenhum erro registrado.</p>
           ) : (
             <div className="overflow-x-auto">

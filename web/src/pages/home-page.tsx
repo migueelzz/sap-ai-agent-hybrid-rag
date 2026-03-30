@@ -46,7 +46,7 @@ export function HomePage() {
 
   return (
     <div className="flex h-full flex-col items-center justify-center px-4">
-      <div className="w-full max-w-xl space-y-2">
+      <div className="w-full max-w-2xl space-y-2">
         {/* Greeting */}
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-semibold text-foreground">

@@ -10,12 +10,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { Skeleton } from '@/components/ui/skeleton'
 import { getSkills, uploadSkill, deleteSkill, toggleSkill } from '@/lib/api'
 import type { SkillMeta } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 export function SkillsPage() {
   const [skills, setSkills] = useState<SkillMeta[]>([])
+  const [loading, setLoading] = useState(true)
   const [isDragging, setIsDragging] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -23,7 +25,10 @@ export function SkillsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    getSkills().then(setSkills).catch(() => {})
+    getSkills()
+      .then(setSkills)
+      .catch(() => {})
+      .finally(() => setLoading(false))
   }, [])
 
   const handleFile = async (file: File) => {
@@ -85,7 +90,7 @@ export function SkillsPage() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="mx-auto max-w-2xl space-y-6 px-4 py-8">
+      <div className="mx-auto max-w-5xl space-y-6 px-4 py-8">
         {/* Header */}
         <div className="flex items-start gap-3">
           <Zap className="mt-0.5 size-5 shrink-0 text-sidebar-primary" />
@@ -152,7 +157,23 @@ export function SkillsPage() {
         </div>
 
         {/* Skills list */}
-        {skills.length === 0 ? (
+        {loading ? (
+          <div className="space-y-2">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-start gap-3 rounded-xl border border-border p-4">
+                <Skeleton className="mt-0.5 size-4 shrink-0 rounded" />
+                <div className="flex-1 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-28" />
+                    <Skeleton className="h-4 w-16 rounded" />
+                  </div>
+                  <Skeleton className="h-3 w-full" />
+                  <Skeleton className="h-3 w-3/4" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : skills.length === 0 ? (
           <div className="py-8 text-center text-sm text-muted-foreground">
             Nenhuma skill cadastrada. Faça upload de um arquivo .md para começar.
           </div>

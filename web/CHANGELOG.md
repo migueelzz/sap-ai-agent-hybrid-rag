@@ -5,6 +5,16 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/)
 
 ---
 
+## [não lançado] — 2026-03-30 (loading skeletons em todas as telas)
+
+### Adicionado
+- `src/pages/chats-page.tsx`: skeleton de grupos e linhas de conversa no carregamento inicial
+- `src/pages/skills-page.tsx`: skeleton de cards de skill enquanto `getSkills()` resolve; estado `loading` adicionado ao componente
+- `src/pages/analytics-page.tsx`: skeleton nos 4 cards de resumo, no gráfico de barras e na tabela de erros; `SummaryCard` aceita prop `loading` para renderizar skeleton internamente
+- `src/components/ui/skeleton.tsx`: componente shadcn adicionado via `npx shadcn add skeleton`
+
+---
+
 ## [não lançado] — 2026-03-30 (confirmações de deleção e multi-select de chats)
 
 ### Adicionado

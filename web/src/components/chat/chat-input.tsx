@@ -151,16 +151,18 @@ export function ChatInput({
     el.style.height = `${Math.min(el.scrollHeight, 200)}px`
   }
 
+  const TEXT_EXTENSIONS = ['.txt', '.md', '.cds', '.py', '.js', '.ts', '.tsx', '.jsx', '.json', '.xml', '.yaml', '.yml', '.sql']
+
   const addFile = (file: File) => {
     const filename = file.name.toLowerCase()
-    const isZip = filename.endsWith('.zip')
-    const isTxt = filename.endsWith('.txt')
-    
-    if (!isZip && !isTxt) return
-    
-    if (isTxt && file.size > 500 * 1024) return // 500KB limit for TXT
-    if (isZip && file.size > 50 * 1024 * 1024) return // 50MB limit for ZIP
-    
+    const ext = '.' + (filename.split('.').pop() ?? '')
+    const isZip = ext === '.zip'
+    const isText = TEXT_EXTENSIONS.includes(ext)
+
+    if (!isZip && !isText) return
+    if (isText && file.size > 500 * 1024) return
+    if (isZip && file.size > 50 * 1024 * 1024) return
+
     onAddFile?.(file)
   }
 
@@ -330,7 +332,7 @@ export function ChatInput({
                   }}
                 >
                   <Paperclip className="size-3.5 shrink-0 text-muted-foreground" />
-                  Anexar arquivo (.txt, .zip)
+                  Anexar arquivo (texto, .zip)
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
@@ -407,7 +409,7 @@ export function ChatInput({
             <input
               ref={fileInputRef}
               type="file"
-              accept=".txt,.zip"
+              accept=".txt,.md,.cds,.py,.js,.ts,.tsx,.jsx,.json,.xml,.yaml,.yml,.sql,.zip"
               className="hidden"
               onChange={handleFileInput}
             />

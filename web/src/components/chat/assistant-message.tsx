@@ -97,7 +97,7 @@ function DownloadMenu({
   )
 }
 
-function CopyButton({ text }: { text: string }) {
+function CopyButton({ text, className }: { text: string; className?: string }) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
@@ -110,7 +110,7 @@ function CopyButton({ text }: { text: string }) {
     <button
       onClick={handleCopy}
       title="Copiar"
-      className="rounded p-1 text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+      className={className ?? 'rounded p-1 text-muted-foreground/50 hover:text-muted-foreground transition-colors'}
     >
       {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
     </button>
@@ -186,14 +186,20 @@ export function AssistantMessage({ message, onRetry, thinkingEnabled = true, onE
                   const raw = codeEl.props.children
                   const codeStr = (Array.isArray(raw) ? raw.join('') : String(raw ?? '')).replace(/\n$/, '')
                   return (
-                    <SyntaxHighlighter
-                      style={oneDark}
-                      language={lang?.[1] ?? 'text'}
-                      PreTag="div"
-                      customStyle={{ margin: 0, borderRadius: '0.5rem', fontSize: '0.82rem' }}
-                    >
-                      {codeStr}
-                    </SyntaxHighlighter>
+                    <div className="relative group/code">
+                      <CopyButton
+                        text={codeStr}
+                        className="absolute top-2 right-2 z-10 rounded p-1 opacity-0 group-hover/code:opacity-100 transition-opacity bg-white/10 hover:bg-white/20 text-white/70 hover:text-white"
+                      />
+                      <SyntaxHighlighter
+                        style={oneDark}
+                        language={lang?.[1] ?? 'text'}
+                        PreTag="div"
+                        customStyle={{ margin: 0, borderRadius: '0.5rem', fontSize: '0.82rem' }}
+                      >
+                        {codeStr}
+                      </SyntaxHighlighter>
+                    </div>
                   )
                 },
               }}

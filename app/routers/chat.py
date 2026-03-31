@@ -526,8 +526,10 @@ async def upload_attachment(
 ):
     # 1. Validar extensão
     filename = file.filename or "arquivo.txt"
-    if not filename.lower().endswith(".txt"):
-        raise HTTPException(status_code=400, detail="Apenas arquivos .txt são aceitos.")
+    ext = Path(filename.lower()).suffix
+    if ext not in ALLOWED_EXTENSIONS:
+        allowed = ", ".join(sorted(ALLOWED_EXTENSIONS))
+        raise HTTPException(status_code=400, detail=f"Extensão não permitida. Use: {allowed}")
 
     # 2. Sanitizar filename
     safe_name = re.sub(r'[^\w\s\-\.]', '_', filename)

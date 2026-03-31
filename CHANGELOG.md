@@ -5,6 +5,14 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/)
 
 ---
 
+## [não lançado] — 2026-03-30 (código completo obrigatório e mais extensões de attachment)
+
+### Alterado
+- `app/agent/prompts.py`: adicionada regra absoluta de código completo — proíbe qualquer placeholder como `# Aqui vai sua lógica`, `// TODO`, `pass # implementar` etc.; todo bloco de código deve ser funcional e executável
+- `app/routers/chat.py`: endpoint `upload_attachment` agora aceita todas as extensões do `ALLOWED_EXTENSIONS` (`.txt`, `.md`, `.cds`, `.py`, `.js`, `.ts`, `.tsx`, `.jsx`, `.json`, `.xml`, `.yaml`, `.yml`, `.sql`) em vez de apenas `.txt`
+
+---
+
 ## [não lançado] — 2026-03-30 (suporte a Google Gemini direto via .env)
 
 ### Adicionado

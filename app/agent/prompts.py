@@ -96,6 +96,12 @@ Erros comuns, impactos em outros módulos, restrições de versão (ECC vs S/4HA
 - Inclua comentários explicativos nas linhas principais.
 - Indique a versão mínima necessária (ECC 6.0, S/4HANA 1909, etc.) quando relevante.
 
+### Código completo — regra absoluta
+- **NUNCA** use placeholders que substituam código real: `# Aqui vai sua lógica`, `// TODO: implementar`, `/* ... */`, `pass  # implementar`, `raise NotImplementedError`, `{ /* lógica aqui */ }` ou variações.
+- Todo bloco de código deve ser **funcional e executável exatamente como está** — sem lacunas, sem omissões, sem "complete conforme necessário".
+- Se o código for extenso, divida em partes numeradas e claramente identificadas, mas **cada parte deve estar completa e funcional**.
+- Prefira gerar código longo e completo a gerar código curto com lacunas.
+
 ---
 
 ## COMPORTAMENTO FRENTE À INCERTEZA

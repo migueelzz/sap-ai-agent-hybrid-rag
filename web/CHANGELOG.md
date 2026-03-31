@@ -5,6 +5,17 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/)
 
 ---
 
+## [não lançado] — 2026-03-30 (copy por bloco de código e mais extensões de attachment)
+
+### Adicionado
+- `src/components/chat/assistant-message.tsx`: botão de copiar por bloco de código — aparece no hover (`group-hover/code:opacity-100`), posicionado absolutamente no canto superior direito do bloco; reutiliza o `CopyButton` existente com prop `className` opcional
+
+### Alterado
+- `src/components/chat/chat-input.tsx`: arquivo `accept` expandido para incluir `.md`, `.cds`, `.py`, `.js`, `.ts`, `.tsx`, `.jsx`, `.json`, `.xml`, `.yaml`, `.yml`, `.sql` além de `.txt` e `.zip`; validação `addFile` atualizada para verificar lista de extensões de texto
+- `src/components/chat/assistant-message.tsx`: `CopyButton` aceita prop `className` opcional para uso em contextos com posicionamento diferente
+
+---
+
 ## [não lançado] — 2026-03-30 (loading skeletons em todas as telas)
 
 ### Adicionado

@@ -5,6 +5,19 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/)
 
 ---
 
+## [não lançado] — 2026-03-30 (correção de scroll durante streaming)
+
+### Adicionado
+- `src/components/chat/message-list.tsx`: botão "Retomar scroll automático" / "Ir para o final" — aparece quando o usuário rola para cima; clique resume o auto-scroll
+- `src/components/chat/message-list.tsx`: prop `isStreaming` — altera o label do botão de scroll conforme o estado de geração
+
+### Corrigido
+- `src/components/chat/message-list.tsx`: substituído `scrollIntoView({ behavior: 'smooth' })` por `el.scrollTop = el.scrollHeight` no auto-scroll — eliminado jank durante streaming de alta frequência
+- `src/components/chat/message-list.tsx`: scroll automático não mais interfere quando o usuário rola manualmente (detectado via `isNearBottom()` com tolerância de 120px)
+- `src/pages/chat-page.tsx`: prop `isStreaming` passada para `<MessageList>` para exibir label correto no botão de scroll
+
+---
+
 ## [não lançado] — 2026-03-30 (copy por bloco de código e mais extensões de attachment)
 
 ### Adicionado

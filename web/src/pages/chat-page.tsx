@@ -83,6 +83,7 @@ export function ChatPage() {
 
       <MessageList
         messages={messages}
+        isStreaming={isStreaming}
         onRetry={retryLast}
         thinkingEnabled={thinkingEnabled}
         onExtractDocument={handleExtractDocument}

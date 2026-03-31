@@ -12,9 +12,13 @@ Segurança implementada:
 
 from __future__ import annotations
 
+from io import BytesIO
+
 import fitz  # PyMuPDF
+from PIL import Image
 
 from app.attachments.validators import sanitize_content_for_llm
+from app.config import settings
 
 MAX_PDF_CHARS = 12_000       # igual ao budget do RAG (~3k tokens)
 _CHARS_PER_PAGE_CAP = 400    # cap por página para distribuir budget uniformemente
@@ -121,11 +125,19 @@ def extract_pdf_text(data: bytes, filename: str, max_pages: int = 30) -> tuple[s
 def _render_page_as_jpeg(page: fitz.Page) -> bytes:
     """
     Renderiza uma página PDF como imagem JPEG (2× escala para boa resolução).
-    Usado para páginas sem texto suficiente (screenshots, scans, diagramas).
+    Recomprime via Pillow com resize para 1024px e qualidade configurável,
+    reduzindo drasticamente o tamanho em BYTEA sem perda perceptível para a LLM.
     """
-    matrix = fitz.Matrix(2.0, 2.0)  # 2× = resolução adequada para leitura pelo LLM
+    matrix = fitz.Matrix(2.0, 2.0)  # 2× = resolução inicial adequada para leitura
     pixmap = page.get_pixmap(matrix=matrix, colorspace=fitz.csRGB)
-    return pixmap.tobytes("jpeg")
+    raw = pixmap.tobytes("jpeg")
+
+    # Reprocessar com Pillow: resize + qualidade controlada + optimize
+    img = Image.open(BytesIO(raw)).convert("RGB")
+    img.thumbnail((1024, 1024), Image.LANCZOS)
+    buf = BytesIO()
+    img.save(buf, format="JPEG", quality=settings.pdf_page_jpeg_quality, optimize=True, exif=b"")
+    return buf.getvalue()
 
 
 def _has_javascript(doc: fitz.Document) -> bool:

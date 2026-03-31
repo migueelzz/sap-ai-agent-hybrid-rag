@@ -17,12 +17,13 @@ from io import BytesIO
 
 from PIL import Image
 
+from app.config import settings
+
 # Proteção contra decompression bomb — deve ser definida antes de qualquer Image.open()
 MAX_IMAGE_DIMENSION = 4096
 Image.MAX_IMAGE_PIXELS = MAX_IMAGE_DIMENSION * MAX_IMAGE_DIMENSION
 
 TARGET_DIMENSION = 1024   # redimensiona long-edge para este valor
-JPEG_QUALITY = 85         # qualidade JPEG de saída
 
 
 def process_image(data: bytes, mime_type: str) -> tuple[bytes, str, tuple[int, int]]:
@@ -66,7 +67,8 @@ def process_image(data: bytes, mime_type: str) -> tuple[bytes, str, tuple[int, i
 
     buf = BytesIO()
     # exif=b"" remove todos os metadados EXIF (inclui GPS, câmera, autor)
-    img.save(buf, format="JPEG", quality=JPEG_QUALITY, exif=b"")
+    # optimize=True: segunda passagem Huffman — poupa 5-10% sem perda de qualidade
+    img.save(buf, format="JPEG", quality=settings.image_jpeg_quality, optimize=True, exif=b"")
     processed_bytes = buf.getvalue()
 
     return processed_bytes, "image/jpeg", (out_w, out_h)

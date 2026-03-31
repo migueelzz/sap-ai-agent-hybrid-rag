@@ -32,6 +32,10 @@ class Settings(BaseSettings):
     # Chat limits
     max_chat_messages: int = 100  # máximo de pares human+assistant por sessão
 
+    # Compressão de imagens
+    image_jpeg_quality: int = 80      # 1-95; 80 mantém qualidade visual com menor tamanho
+    pdf_page_jpeg_quality: int = 75   # qualidade das páginas renderizadas de PDF
+
     model_config = SettingsConfigDict(
         env_file=".env",
         extra="ignore"

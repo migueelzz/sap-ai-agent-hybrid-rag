@@ -5,6 +5,12 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/)
 
 ---
 
+## [não lançado] — 2026-03-31 (sem mudanças de frontend para compressão de imagens)
+
+Otimizações de compressão aplicadas apenas no backend (`image_processor.py` e `pdf_processor.py`). Sem impacto em interfaces ou comportamento visível ao usuário.
+
+---
+
 ## [não lançado] — 2026-03-31 (rename/pin de chats, limite de contexto, arquivos Office)
 
 ### Adicionado

@@ -5,6 +5,18 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/)
 
 ---
 
+## [não lançado] — 2026-03-31 (compressão de imagens e páginas PDF)
+
+### Adicionado
+- `app/config.py`: campos `image_jpeg_quality: int = 80` e `pdf_page_jpeg_quality: int = 75` — qualidade JPEG configurável via `.env` para imagens e páginas renderizadas de PDF
+- `.env.example`: documentação de `IMAGE_JPEG_QUALITY`, `PDF_PAGE_JPEG_QUALITY` e `MAX_CHAT_MESSAGES`
+
+### Alterado
+- `app/attachments/image_processor.py`: qualidade JPEG agora usa `settings.image_jpeg_quality` (padrão 80 vs. 85 anterior) e adiciona `optimize=True` (segunda passagem Huffman) — redução típica de 20–25% no tamanho do JPEG sem perda perceptível
+- `app/attachments/pdf_processor.py`: `_render_page_as_jpeg()` agora reprocessa a imagem gerada pelo PyMuPDF via Pillow — aplica `thumbnail(1024, 1024)` e `quality=settings.pdf_page_jpeg_quality` + `optimize=True`; uma página A4 sai de ~400–600 KB para ~80–150 KB (redução 3–5×)
+
+---
+
 ## [não lançado] — 2026-03-31 (arquivos Office, limite de contexto)
 
 ### Adicionado

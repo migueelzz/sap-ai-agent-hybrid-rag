@@ -5,6 +5,15 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/)
 
 ---
 
+## [não lançado] — 2026-03-31 (reasoning/thinking display)
+
+### Adicionado
+- `app/config.py`: variável `LLM_THINKING_BUDGET` (int, default 0) — habilita reasoning no Gemini 2.5+ quando > 0
+- `app/agent/agent.py`: passa `thinkingConfig` ao `ChatOpenAI` quando provider=google e budget > 0
+- `.env.example`: documenta `LLM_THINKING_BUDGET`
+
+---
+
 ## [não lançado] — 2026-03-31 (ZIP generation, PDF download, sticky copy button)
 
 ### Adicionado

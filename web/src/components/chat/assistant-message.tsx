@@ -119,7 +119,7 @@ function CopyButton({ text, className }: { text: string; className?: string; lab
 }
 
 export function AssistantMessage({ message, onRetry, thinkingEnabled = true, onExtractDocument, onSendNextStep, accumulatedDocument, onDownloadZip }: AssistantMessageProps) {
-  const { content, toolCalls = [], thinkingContent, isStreaming = false, hasError, elapsedMs, isDocument, nextSkill } = message
+  const { content, toolCalls = [], thinkingContent, thinkingElapsedMs, isStreaming = false, hasError, elapsedMs, isDocument, nextSkill } = message
   const hasZipOutput = !isStreaming && toolCalls.some((tc) => tc.name === 'write_output_file' && tc.status === 'done')
 
   // Timer em tempo real durante o streaming
@@ -141,7 +141,7 @@ export function AssistantMessage({ message, onRetry, thinkingEnabled = true, onE
 
   return (
     <div className="group flex flex-col gap-0 max-w-[85%]">
-      <ThinkingPanel toolCalls={toolCalls} thinkingContent={thinkingContent} isStreaming={isStreaming} visible={thinkingEnabled} />
+      <ThinkingPanel toolCalls={toolCalls} thinkingContent={thinkingContent} thinkingElapsedMs={thinkingElapsedMs} isStreaming={isStreaming} visible={thinkingEnabled} />
 
       {/* Spinner de loading inicial */}
       {isLoadingInitial && (
@@ -224,7 +224,7 @@ export function AssistantMessage({ message, onRetry, thinkingEnabled = true, onE
       {hasZipOutput && onDownloadZip && (
         <button
           onClick={onDownloadZip}
-          className="mt-2 flex w-fit items-center gap-2 rounded-lg border border-border/50 bg-muted/30 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:border-border hover:bg-muted/60 transition-colors"
+          className="cursor-pointer mt-2 flex w-fit items-center gap-2 rounded-lg border border-border/50 bg-muted/30 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:border-border hover:bg-muted/60 transition-colors"
         >
           <Download className="size-3.5 shrink-0" />
           Baixar arquivos gerados (.zip)
@@ -284,8 +284,8 @@ export function AssistantMessage({ message, onRetry, thinkingEnabled = true, onE
       {nextSkill && !isStreaming && (
         <button
           onClick={() => onSendNextStep?.(nextSkill)}
-          className="mt-3 flex w-fit items-center gap-2 rounded-lg border border-sidebar-primary/30 bg-sidebar-primary/5 px-3.5 py-2 text-sm text-sidebar-primary transition-colors hover:bg-sidebar-primary/15 hover:border-sidebar-primary/50"
-        >
+          className="cursor-pointer mt-2 flex w-fit items-center gap-2 rounded-lg border border-border/50 bg-muted/30 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:border-border hover:bg-muted/60 transition-colors"
+          >
           <Play className="size-3.5 shrink-0 fill-current" />
           <span className="font-medium">
             {SKILL_STEP_LABELS[nextSkill] ?? formatSkillLabel(nextSkill)}

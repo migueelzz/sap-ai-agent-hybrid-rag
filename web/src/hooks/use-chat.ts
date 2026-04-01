@@ -170,15 +170,26 @@ export function useChat(sessionId: string) {
       let currentContent = ''
       let currentThinking = ''
       let currentTools: ToolCall[] = []
+      let thinkingStartedAt: number | null = null
+      let thinkingEnded = false
 
       try {
         for await (const chunk of streamMessage(sessionId, text, controller.signal, skillNames, webSearchEnabled)) {
           if (chunk.type === 'token') {
+            // Registra duração do thinking na chegada do primeiro token de resposta
+            if (thinkingStartedAt && !thinkingEnded) {
+              thinkingEnded = true
+              const elapsed = Date.now() - thinkingStartedAt
+              setMessages((prev) =>
+                prev.map((m) => (m.id === assistantId ? { ...m, thinkingElapsedMs: elapsed } : m)),
+              )
+            }
             currentContent += chunk.content
             setMessages((prev) =>
               prev.map((m) => (m.id === assistantId ? { ...m, content: currentContent } : m)),
             )
           } else if (chunk.type === 'thinking') {
+            if (!thinkingStartedAt) thinkingStartedAt = Date.now()
             currentThinking += chunk.content
             setMessages((prev) =>
               prev.map((m) => (m.id === assistantId ? { ...m, thinkingContent: currentThinking } : m)),
@@ -246,6 +257,14 @@ export function useChat(sessionId: string) {
             }
             break
           } else if (chunk.type === 'done') {
+            // Caso thinking ocorreu mas nenhum token chegou depois (ex: resposta só de thinking)
+            if (thinkingStartedAt && !thinkingEnded) {
+              thinkingEnded = true
+              const elapsed = Date.now() - thinkingStartedAt
+              setMessages((prev) =>
+                prev.map((m) => (m.id === assistantId ? { ...m, thinkingElapsedMs: elapsed } : m)),
+              )
+            }
             if (chunk.is_document || chunk.next_skill) {
               setMessages((prev) =>
                 prev.map((m) =>

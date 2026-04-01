@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     llm_temperature: float = 0.3
     context_window: int = 128000
 
+    # Reasoning / thinking
+    llm_thinking_budget: int = 0  # 0 = desabilitado; >0 ativa reasoning (ex: 8000 tokens para Gemini 2.5+)
+
     # MCP
     mcp_enabled: bool = False
 

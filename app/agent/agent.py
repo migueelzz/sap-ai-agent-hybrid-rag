@@ -19,11 +19,24 @@ def _resolve_llm() -> ChatOpenAI:
     provider = (settings.llm_provider or "").strip().lower()
     if provider == "google":
         base_url = _GOOGLE_BASE_URL
-        
         model = settings.llm_model.removeprefix("gemini/")
     else:
         base_url = settings.llm_base_url or None
         model = settings.llm_model
+
+    extra_kwargs: dict = {}
+    if settings.llm_thinking_budget > 0:
+        if provider == "google":
+            # Google AI API (direto): usa thinkingConfig no body da requisição
+            extra_kwargs["model_kwargs"] = {
+                "thinkingConfig": {"thinkingBudget": settings.llm_thinking_budget}
+            }
+        else:
+            # LiteLLM proxy: passa thinking via extra_body (OpenAI SDK ≥ 1.x)
+            extra_kwargs["extra_body"] = {
+                "thinking": {"type": "enabled", "budget_tokens": settings.llm_thinking_budget}
+            }
+
     return ChatOpenAI(
         model=model,
         api_key=settings.llm_api_key or "no-key",
@@ -32,6 +45,7 @@ def _resolve_llm() -> ChatOpenAI:
         temperature=settings.llm_temperature,
         streaming=True,
         max_retries=0,  # falha rápida — sem retry automático no proxy LiteLLM
+        **extra_kwargs,
     )
 
 

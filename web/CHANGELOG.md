@@ -5,6 +5,18 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/)
 
 ---
 
+## [não lançado] — 2026-03-31 (reasoning/thinking display)
+
+### Adicionado
+- `src/lib/types.ts`: campo `thinkingElapsedMs?: number` em `ChatMessage`
+- `src/hooks/use-chat.ts`: rastreia início/fim do thinking durante stream e salva duração em ms na mensagem
+- `src/components/chat/thinking-panel.tsx`: redesenhado — mostra "Pensando…" (com ícone pulsante) durante stream e "Pensou por X segundos" após; texto completo do raciocínio sem altura máxima; seção de ações separada
+
+### Alterado
+- `src/components/chat/assistant-message.tsx`: passa `thinkingElapsedMs` ao `ThinkingPanel`
+
+---
+
 ## [não lançado] — 2026-03-31 (upload múltiplo de skills)
 
 ### Adicionado

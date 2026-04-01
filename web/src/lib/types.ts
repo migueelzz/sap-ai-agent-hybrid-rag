@@ -67,6 +67,7 @@ export interface ChatMessage {
   content: string
   toolCalls?: ToolCall[]
   thinkingContent?: string
+  thinkingElapsedMs?: number
   isStreaming?: boolean
   hasError?: boolean
   elapsedMs?: number

@@ -521,10 +521,13 @@ async def _stream_agent(
                         or (metadata.get("finish_reasons") or [None])[0]
                     )
                     if reason in ("length", "max_tokens"):
-                        raise RuntimeError(
-                            "A resposta ficou longa demais para ser processada de uma vez. "
-                            "Tente dividir a análise em etapas menores — por exemplo, execute cada fase separadamente."
+                        # Emite aviso inline sem interromper o stream — o conteúdo já chegou
+                        warning = (
+                            "\n\n---\n> ⚠️ **Resposta truncada** — o limite de tokens de saída foi atingido. "
+                            "Para conteúdos extensos, divida a tarefa em etapas menores."
                         )
+                        payload = MessageChunk(type="token", content=warning)
+                        yield f"data: {payload.model_dump_json()}\n\n"
 
         next_skill = _next_in_chain(last_used_skill)
         try:
